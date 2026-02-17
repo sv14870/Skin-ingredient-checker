@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Skin Guard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F7F3EE;
+  --ink: #1A1612;
+  --clay: #C4784A;
+  --clay-light: #E8C4A0;
+  --clay-pale: #F5EAE0;
+  --sage: #7A8C6E;
+  --sage-pale: #EDF0EA;
+  --warm-mid: #8C7B6E;
+  --warm-light: #D4C4B8;
+  --exact-bg: #FBF0EC;
+  --exact-border: #C4784A;
+  --fuzzy-bg: #F5F0E8;
+  --fuzzy-border: #B5A882;
+  --card-shadow: 0 2px 16px rgba(26,22,18,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 13px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 20px 24px 18px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  letter-spacing: -0.5px;
+  color: var(--cream);
+}
+
+.header-title span {
+  color: var(--clay);
+  font-style: italic;
+}
+
+.header-sub {
+  font-size: 11px;
+  color: var(--warm-light);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.header-nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.nav-btn {
+  background: none;
+  border: 1px solid #3A332C;
+  color: var(--warm-light);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+.nav-btn:hover, .nav-btn.active {
+  background: var(--clay);
+  border-color: var(--clay);
+  color: white;
+}
+
+/* ── VIEWS ── */
+.view { display: none; padding: 24px; max-width: 720px; margin: 0 auto; }
+.view.active { display: block; }
+
+/* ── CHECK VIEW ── */
+.input-block { margin-bottom: 20px; }
+
+.field-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-mid);
+  margin-bottom: 6px;
+}
+
+input[type=text], textarea {
+  width: 100%;
+  background: white;
+  border: 1.5px solid var(--warm-light);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  transition: border-color 0.15s;
+  outline: none;
+}
+input[type=text]:focus, textarea:focus {
+  border-color: var(--clay);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.6;
+}
+
+.btn-check {
+  width: 100%;
+  background: var(--ink);
+  color: var(--cream);
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn-check:hover { background: #2E2620; }
+.btn-check:active { transform: scale(0.99); }
+
+/* ── RESULTS ── */
+.results-area { margin-top: 28px; }
+
+.results-banner {
+  background: var(--ink);
+  color: var(--cream);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.banner-product {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.banner-stat {
+  text-align: center;
+}
+.banner-stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  line-height: 1;
+}
+.banner-stat-num.red { color: var(--clay); }
+.banner-stat-num.amber { color: var(--clay-light); }
+.banner-stat-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--warm-light);
+  margin-top: 2px;
+}
+
+.section-heading {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-mid);
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--warm-light);
+}
+
+.match-card {
+  background: white;
+  border-radius: 10px;
+  border: 1.5px solid var(--warm-light);
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: border-color 0.15s;
+}
+.match-card:hover { border-color: var(--clay); }
+
+.match-card.exact { border-left: 4px solid var(--clay); }
+.match-card.fuzzy { border-left: 4px solid var(--warm-mid); }
+
+.match-card-header {
+  padding: 12px 16px 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.match-input-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  flex: 1;
+  line-height: 1.3;
+}
+
+.match-type-pill {
+  flex-shrink: 0;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+.pill-exact { background: var(--exact-bg); color: var(--clay); border: 1px solid var(--clay); }
+.pill-fuzzy { background: var(--fuzzy-bg); color: #7A6E52; border: 1px solid var(--fuzzy-border); }
+
+.match-card-body {
+  padding: 0 16px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.match-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.match-row-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-mid);
+}
+
+.match-row-val {
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.match-row-val.matched-name {
+  font-style: italic;
+  color: var(--warm-mid);
+}
+
+.rating-badge {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--cream);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.sim-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sim-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--warm-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.sim-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--clay);
+}
+.sim-pct { font-size: 11px; color: var(--warm-mid); min-width: 32px; text-align: right; }
+
+.clear-results-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  background: none;
+  border: 1.5px solid var(--warm-light);
+  color: var(--warm-mid);
+  padding: 10px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+.clear-results-btn:hover { border-color: var(--clay); color: var(--clay); }
+
+.all-clear {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--warm-mid);
+}
+.all-clear-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+.all-clear h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--sage);
+  margin-bottom: 8px;
+}
+
+/* ── HISTORY VIEW ── */
+.history-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--warm-mid);
+  font-size: 13px;
+}
+
+.history-card {
+  background: white;
+  border: 1.5px solid var(--warm-light);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--card-shadow);
+}
+.history-card:hover { border-color: var(--clay); box-shadow: 0 4px 20px rgba(196,120,74,0.12); }
+
+.history-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.history-product-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  flex: 1;
+}
+
+.history-date {
+  font-size: 11px;
+  color: var(--warm-mid);
+  white-space: nowrap;
+}
+
+.history-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--warm-mid);
+}
+
+.history-meta-item strong { color: var(--ink); }
+.history-meta-item.has-matches strong { color: var(--clay); }
+
+.history-detail {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--warm-light);
+}
+.history-detail.open { display: block; }
+
+.history-match-row {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--clay-pale);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+}
+.history-match-row:last-child { border-bottom: none; }
+
+.history-match-name { font-size: 13px; }
+.history-match-type {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--warm-mid);
+}
+.history-match-type.exact { color: var(--clay); }
+
+.history-clear-btn {
+  margin-top: 20px;
+  display: block;
+  width: 100%;
+  background: none;
+  border: 1.5px solid var(--warm-light);
+  color: var(--warm-mid);
+  padding: 10px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+.history-clear-btn:hover { border-color: #C06060; color: #C06060; }
+
+/* ── LIST VIEW ── */
+.list-search-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+.list-search-wrap input { padding-left: 36px; }
+.list-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--warm-mid);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.list-count {
+  font-size: 11px;
+  color: var(--warm-mid);
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+}
+
+.list-item {
+  background: white;
+  border: 1.5px solid var(--warm-light);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  box-shadow: var(--card-shadow);
+}
+
+.list-item-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.list-item-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--warm-mid);
+}
+
+.list-item-meta .rating-badge {
+  font-size: 11px;
+  padding: 1px 6px;
+}
+
+.list-item-notes {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--warm-mid);
+  font-style: italic;
+}
+
+/* ── UTILITY ── */
+.spinner-wrap {
+  text-align: center;
+  padding: 40px;
+  color: var(--warm-mid);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  display: inline-block;
+  width: 28px; height: 28px;
+  border: 3px solid var(--warm-light);
+  border-top-color: var(--clay);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 480px) {
+  .header { padding: 14px 16px 12px; flex-wrap: wrap; }
+  .header-nav { width: 100%; }
+  .nav-btn { flex: 1; text-align: center; }
+  .view { padding: 16px; }
+  .match-row { grid-template-columns: 70px 1fr; }
+  .results-banner { gap: 16px; }
+  .banner-stat-num { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="header-title">Skin<span>Guard</span></div>
+    <div class="header-sub">653 ingredients tracked</div>
+  </div>
+  <nav class="header-nav">
+    <button class="nav-btn active" onclick="showView('check', this)">Check</button>
+    <button class="nav-btn" onclick="showView('history', this)">History</button>
+    <button class="nav-btn" onclick="showView('list', this)">List</button>
+  </nav>
+</header>
+
+<!-- CHECK VIEW -->
+<div id="view-check" class="view active">
+  <div class="input-block">
+    <label class="field-label" for="productName">Product name</label>
+    <input type="text" id="productName" placeholder="e.g. CeraVe Moisturizing Cream">
+  </div>
+  <div class="input-block">
+    <label class="field-label" for="ingredientInput">Ingredient list</label>
+    <textarea id="ingredientInput" placeholder="Paste the full ingredient list here — Water, Glycerin, Dimethicone..."></textarea>
+  </div>
+  <button class="btn-check" onclick="runCheck()">Analyze Ingredients</button>
+
+  <div id="resultsArea" class="results-area" style="display:none"></div>
+</div>
+
+<!-- HISTORY VIEW -->
+<div id="view-history" class="view">
+  <div id="historyContent"></div>
+</div>
+
+<!-- LIST VIEW -->
+<div id="view-list" class="view">
+  <div class="list-search-wrap">
+    <span class="list-search-icon">⌕</span>
+    <input type="text" id="listSearch" placeholder="Search avoid list..." oninput="filterList(this.value)">
+  </div>
+  <div id="listCount" class="list-count"></div>
+  <div id="listContent"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const AVOID_LIST = [{"name": "A & D additive", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "vitamins & herbs"}, {"name": "A13-00356", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "Acai Berry Oil", "rating": "5", "source": "Emme Diane", "notes": "high in oleic acid & moderate in linoleic acid"}, {"name": "Acetol", "rating": "5", "source": "Emme Diane", "notes": ""}, {"name": "Acetulan", "rating": "5", "source": "Emme Diane", "notes": ""}, {"name": "Acetylated Lanolin", "rating": "4", "source": "ALL", "notes": "lanolins"}, {"name": "Acetylated Lanolin Alcohol", "rating": "5", "source": "ALL", "notes": "lanolins, 2 irritant"}, {"name": "Acetylated wool wax", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Acetylated wool fat", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Active Soil / active soil complex", "rating": "4", "source": "Emme Diane", "notes": "questionable minerals"}, {"name": "adansonia digitata l.", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Adamosis Stearate", "rating": "2", "source": "Emme Diane", "notes": "2 irritant"}, {"name": "Agar", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Ahnfeltia Concinna / extract", "rating": "3", "source": "Clearstem, Skin Salvation", "notes": "seaweed"}, {"name": "ahnfeltiopsis Concinna extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Akyposal SDS", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "Alaria Esculenta", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Alaria Esculenta extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "alga bladderwrack", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "algea", "rating": "", "source": "", "notes": ""}, {"name": "Algae", "rating": "3", "source": "ALL", "notes": "seaweed"}, {"name": "Algae Extract", "rating": "5", "source": "ALL", "notes": "botanical | seaweed"}, {"name": "Algin (Alginic acid; potassium alginate; sodium alginate)", "rating": "4", "source": "ALL", "notes": "seaweed"}, {"name": "alginic acid", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "alginate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Almond oil", "rating": "2", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "sweet almond oil is also comedogenic, high in oleic Acid"}, {"name": "Aloe Butter", "rating": "5", "source": "Emme Diane", "notes": "butter"}, {"name": "Amaranth Oil", "rating": "3", "source": "Emme Diane", "notes": "oils"}, {"name": "Amberlate P", "rating": "3", "source": "Emme Diane", "notes": ""}, {"name": "Amerchol", "rating": "2", "source": "Emme Diane", "notes": ""}, {"name": "amyl cinnamal", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Andiroba Seed Oil", "rating": "2", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid, moderate in linoleic acid"}, {"name": "Anhydrous lanolin", "rating": "5", "source": "Emme Diane", "notes": "lanolins"}, {"name": "aphanothece sacrum polysaccharide", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Apricot Kernel Oil (Prunus Armeniaca Kernel Oil)", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "high in oleic acid; all forms"}, {"name": "apricot", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Apricot Oil", "rating": "2", "source": "ALL", "notes": "66% oleic acid & 29% linoleic acid"}, {"name": "Apricot Seed Oil", "rating": "2", "source": "ALL", "notes": "high in oleic acid"}, {"name": "Aquarex ME", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "Aquarex Methyl", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "Arachidonic Acid in Sunflower Oil", "rating": "2", "source": "Emme Diane", "notes": "fatty acids"}, {"name": "Archidic acid", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "Archidic acid in Sunflower Oil", "rating": "2", "source": "Skin Salvation", "notes": ""}, {"name": "Argan Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "discovered comeodgenic in many skin & hair products"}, {"name": "Argania Spinosa", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "discovered comeodgenic in many skin & hair products"}, {"name": "Argania Spinosa Kernel Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "aka argan oil, discovered comeodgenic in many skin & hair products"}, {"name": "Argania Spinosa Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "aka argan oil, discovered comeodgenic in many skin & hair products"}, {"name": "arthrospira plantensis", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Ascophyllum", "rating": "", "source": "", "notes": ""}, {"name": "Ascophyllum Nodosum / extract", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "asparagopsis armata extract", "rating": "", "source": "", "notes": ""}, {"name": "astrocaryum murumuru seed butter", "rating": "", "source": "", "notes": ""}, {"name": "Ascorbyl Palmitate", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids and their derivatives, some say 2 some say 5"}, {"name": "avocado", "rating": "", "source": "", "notes": ""}, {"name": "Avocado Butter", "rating": "5", "source": "Emme Diane", "notes": "butter"}, {"name": "Avocado Oil (Persea Gratissima Oil)", "rating": "5", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "high in oleic acid, some say 3 some say 5"}, {"name": "Babassu Butter", "rating": "5", "source": "Emme Diane", "notes": "butter"}, {"name": "Babassu Oil (Orbignya Oleifera Kernel Oil)", "rating": "2", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "high in lauric, myristic & oleic acid"}, {"name": "baobab, Baobab Oil, baobaob", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid, moderate linoleic"}, {"name": "beef tallow", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Beeswax (Cera Alba)", "rating": "2", "source": "Emme Diane", "notes": "waxes"}, {"name": "Behenic Acid", "rating": "2", "source": "Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Bentonite", "rating": "0", "source": "", "notes": ""}, {"name": "bismuth", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "bismuth oxychloride", "rating": "", "source": "Clearstem", "notes": "also in Gritty Beauty list"}, {"name": "Black Cumin Seed Oil (Nigella Sativa Seed Oil)", "rating": "4", "source": "Emme Diane", "notes": "high in linoleic acid, moderate oleic"}, {"name": "Black Kelp", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Black Raspberry Seed Oil(Rubus Occidentalis Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "High in linoleic acid, moderate linolenic"}, {"name": "Bladderwrack", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "bladderwack", "rating": "", "source": "", "notes": ""}, {"name": "Blue Algae", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Blue Green Algae", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Borage Oil", "rating": "3", "source": "Emme Diane", "notes": "high in linoleic acid & GLA"}, {"name": "Brazil Nut Oil (Bertholletia Excelsa Seed Oil)", "rating": "3", "source": "Emme Diane", "notes": "high in oleic acid, moderate linoleic"}, {"name": "Broccoli Butter", "rating": "5", "source": "Emme Diane", "notes": "butter"}, {"name": "Brown Algae", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "bryopsis africana", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Buriti Oil", "rating": "2", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid"}, {"name": "Butyl Isostearate", "rating": "", "source": "", "notes": ""}, {"name": "Butyl Stearate", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Butylene Glycol", "rating": "1", "source": "", "notes": ""}, {"name": "Butyrospermum (shea butter)", "rating": "", "source": "", "notes": ""}, {"name": "Butyrospermum Parkii (shea butter) / extract", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "high in oleic and stearic acid, some say 3"}, {"name": "C73-74 Isoparaffin", "rating": "5", "source": "Emme Diane", "notes": "waxes"}, {"name": "cacao seed butter", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Camellia oil", "rating": "5", "source": "Emme Diane", "notes": "high in oleic acid"}, {"name": "camelina oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Camphor oil", "rating": "2", "source": "Emme Diane", "notes": ""}, {"name": "Canola Oil", "rating": "3", "source": "ALL", "notes": "oils"}, {"name": "capea biruncinata var. denuda sonder", "rating": "", "source": "", "notes": ""}, {"name": "capea biruncinata var. elongata sonder", "rating": "", "source": "", "notes": ""}, {"name": "Capric Acid", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Capric Acid in Sunflower Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "other lipids"}, {"name": "Caprylic Acid", "rating": "1", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives, but noted as an irritant"}, {"name": "Capsicum Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Carageenan Moss/Carrageenan Moss", "rating": "5", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "aka seaweed, commonly found in toothpastes"}, {"name": "carageenan gum", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "carastay c", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Carbomer 940 or Carbomer", "rating": "1", "source": "", "notes": ""}, {"name": "Carboxypropylcellulose", "rating": "1", "source": "", "notes": ""}, {"name": "Carnuba Wax", "rating": "1", "source": "", "notes": ""}, {"name": "Carrageenan", "rating": "3", "source": "ALL", "notes": "aka seaweed, commonly found in toothpastes"}, {"name": "Carrot Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Carrot Seed Oil (Daucus Carota Seed Oil)", "rating": "4", "source": "Emme Diane", "notes": "high in oleic acid"}, {"name": "Castor Oil (Ricinus Communis Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in ricinoleic acid"}, {"name": "caulerpa filiformis", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "caulerpa lentillifera extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cera alba", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cera bianca", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cera flava", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cera olea", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Ceteareth 20, ceteareth-20", "rating": "4", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives . comedogenic when cetearyl alcohol is also within the same formulation; they don't necessarily need to be right next to each other to be problematic!"}, {"name": "Ceteareth 6 Olivate, Ceteareth-6 Olivate", "rating": "5", "source": "Emme Diane", "notes": "waxes"}, {"name": "Ceteareth-20", "rating": "2", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "comedogenic when cetearyl alcohol is also within the same formulation; they don't necessarily need to be right next to each other to be problematic!"}, {"name": "Cetearyl Alcohol", "rating": "2", "source": "", "notes": "alcohols, sugars & their derivatives. comedogenic when: 1. ceteareth 20 is also within the same formulation; they don't necessarily need to be right next to each other to be problematic! 2. used in larger amounts, or 3. listed higher up in an ingredient listing."}, {"name": "Cetearyl Alcohol + Ceteareth 20", "rating": "4", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Cetearyl Olivate", "rating": "", "source": "Emme Diane", "notes": "waxes"}, {"name": "cetrimonium bromide", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Cetyl Acetate", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Cetyl alcohol", "rating": "2", "source": "AES, Skin Salvation", "notes": ""}, {"name": "Chamomile Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "chaetomorpha linum (aerea)", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cladophora radiosa", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cherry seed oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Cherry Kernel Oil (Prunus Avium Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in oleic and linoleic acid"}, {"name": "Cheru Seed Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Chia Seed Oil (Salvia Hispanica Seed Oil)", "rating": "3", "source": "Emme Diane", "notes": "high in linolenic"}, {"name": "chlamydomonas reinhardtii extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "chlorophyceae", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Chlorella", "rating": "3", "source": "ALL", "notes": "seaweed"}, {"name": "Chlorella Botanicals", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Chlorella Vulgaris Extract", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "seaweed"}, {"name": "Chondrus Crispus (aka Irish Moss or Carageenan Moss)", "rating": "3", "source": "ALL", "notes": "seaweed"}, {"name": "Chondrus Crispus Extract / powder", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Chullu (Wild Apricot) Seed Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "citral", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Cinnamon Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "cladophora cf. subsimplex", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cladosiphon okamuranus extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Coal Tar", "rating": "5", "source": "ALL", "notes": ""}, {"name": "Cocoa Butter (Theobroma Cacao Seed Butter)", "rating": "4", "source": "Clearstem", "notes": "high in oleic & stearic acid"}, {"name": "coconut", "rating": "", "source": "", "notes": ""}, {"name": "Coconut Alkanes", "rating": "", "source": "AES, Face Reality, Clearstem", "notes": ""}, {"name": "Coconut Butter", "rating": "4", "source": "ALL", "notes": "high in oleic, stearic & palmitic acid"}, {"name": "Coconut Extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Coconut Fruit", "rating": "", "source": "Emme Diane", "notes": ""}, {"name": "Coconut Oil", "rating": "5", "source": "ALL", "notes": "high in lauric acid"}, {"name": "Coconut Oil, Fractionated", "rating": "3", "source": "Emme Diane", "notes": "high in caprylic & capric acid"}, {"name": "Cocos Nucifera (Coconut) Oil", "rating": "5", "source": "Clearstem, Skin Salvation", "notes": "oils"}, {"name": "codium fragile extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "coenochloris signiensis extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Coffee Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Colloidal Sulfur", "rating": "3", "source": "AES, Face Reality, Emme Diane", "notes": "vitamins & herbs"}, {"name": "Corallina Officinalis", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed. discovered comedogenic in colorescience's blush bronzers & sunforgettables spf powders"}, {"name": "Corallina Officinalis Extract", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed. as found in colorescience sunforgettables SPF and blush/bronzer brushes"}, {"name": "corn", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Corn Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "Vegetable oils"}, {"name": "Cotton Awws", "rating": "3", "source": "Emme Diane", "notes": "oils"}, {"name": "Cotton Awws Oil", "rating": "3", "source": "Face Reality, Clearstem", "notes": "oils"}, {"name": "Cotton Seed Oil (Gossypium Herbaceum Seed Oil)", "rating": "3", "source": "ALL", "notes": "high in linoleic acid"}, {"name": "cottonseed oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Cranberry Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Cranberry Oil (Vaccinium Macrocarpon Seed Oil)", "rating": "3", "source": "Clearstem", "notes": "high in linoleic moderate in oleic & linolenic acid"}, {"name": "cranberry seed oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "creosote", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Crisco", "rating": "3", "source": "Emme Diane", "notes": "oils"}, {"name": "crithmum maritimum", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "cupuacu butter", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Cypress Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "cystoseira tamariscifolia extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "D & C red", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "D&C red: 3, 4, 6, 7, 9, 17, 21, 27, 30, 33, 36, 40", "rating": "", "source": "", "notes": ""}, {"name": "D & C Red # 17 aka D&C Red #17 aka D&C red no. 17", "rating": "3", "source": "ALL", "notes": "D&C pigments. FULTON SAYS all red dyes are comedogenic in acne rx (but doesn't mention ratios/dilutions)"}, {"name": "D & C Red # 21 aka D&C Red #21 aka D&C red no. 21", "rating": "2", "source": "ALL", "notes": "D&C pigments"}, {"name": "D & C Red # 3 aka D&C Red #3 aka D&C red no. 3", "rating": "3", "source": "ALL", "notes": "D&C pigments"}, {"name": "D & C Red # 30 aka D&C Red #30 aka D&C red no. 30 aka (CI73360)", "rating": "3", "source": "ALL", "notes": "D&C pigments"}, {"name": "D & C Red # 36 aka D&C Red #36 aka D&C red no. 36", "rating": "3", "source": "ALL", "notes": "D&C pigments"}, {"name": "D&C red no. 1", "rating": "3", "source": "Emme Diane", "notes": "D&C pigments"}, {"name": "D&C red no. 19", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "D&C pigments"}, {"name": "D&C red no. 2", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "D&C pigments"}, {"name": "D&C red no. 27", "rating": "4", "source": "Skin Salvation, Emme Diane", "notes": "*diluted in mineral oil or 10% alcohol base"}, {"name": "D&C red no. 27", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "D&C pigments"}, {"name": "D&C red no. 33", "rating": "2", "source": "Face Reality", "notes": "*diluted in mineral oil or 10% alcohol base"}, {"name": "D&C red no. 35 in pentaerythrital tetra capra/caprylate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": ""}, {"name": "D&C red no. 36 in mineral oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "D&C pigments"}, {"name": "D&C red no. 36 in propylene glycol", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "D&C red no. 4", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "D&C pigments"}, {"name": "D&C red no. 40", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "D&C pigments"}, {"name": "D&C red no. 6", "rating": "3", "source": "Skin Salvation", "notes": "*diluted in mineral oil or 10% alcohol base"}, {"name": "D&C red no. 7", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "D&C red no. 9", "rating": "4", "source": "Skin Salvation", "notes": "*diluted in mineral oil or 10% alcohol base"}, {"name": "d-limonene", "rating": "", "source": "", "notes": ""}, {"name": "Date Seed Oil (Phoenix Dactylifera Seed Extract)", "rating": "3", "source": "Emme Diane", "notes": "high in oleic acid"}, {"name": "Decyl Oleate", "rating": "3", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Dhupa Seed Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Di (2 ethylhexyl) Succinate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "dictyopteris membranacea", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "dictyopteris polypodioides", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Diisostearyl Malate", "rating": "", "source": "Clearstem", "notes": "also flagged in Gritty Beauty list"}, {"name": "Dilsea Carnosa / extract", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Dimethicone", "rating": "1", "source": "Skin Salvation", "notes": "AVOID if your skin is extremely acne-prone; most acne-prone skins can tolerate this ingredient most commonly found in physical block SPF's and makeup primers, but those very sensitive will break out. use la bella donna SPF powder, layered over a moisturizer, instead."}, {"name": "Dioctyl Malate", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Dioctyl Succinate", "rating": "3", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "disodium monooleamido", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Disodium Monooleamido PEG 2- Sulfosuccinate", "rating": "4", "source": "AES, Face Reality, Clearstem, Emme Diane", "notes": ""}, {"name": "dodecanoic acid", "rating": "", "source": "", "notes": ""}, {"name": "Dulse", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "dunaliella salina extract", "rating": "", "source": "", "notes": ""}, {"name": "durvillaea antarctica extract", "rating": "", "source": "", "notes": ""}, {"name": "Ecklonia (all 9 species of it)", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Ecklonia Radiata", "rating": "", "source": "", "notes": ""}, {"name": "Eicosanoic Acid", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Elderberry Seed Oil (Sambucus Nigra Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in linoleic & linolenic acid"}, {"name": "Emu Oil", "rating": "3", "source": "Emme Diane", "notes": "high in oleic acid, moderate in palmitic acid"}, {"name": "Emulsifying Wax NF", "rating": "2", "source": "Emme Diane", "notes": "waxes"}, {"name": "Enteromorpha Compressa", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Ethoxylated Lanolin", "rating": "3", "source": "ALL", "notes": "lanolins"}, {"name": "Ethylhexyl Palmitate", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Ethylhexyl Pelargonate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Evening Primrose Oil (Oenothera Biennis Oil)", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "high in linoleic acid, moderate in GLA"}, {"name": "flax oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Flaxseed Oil (Linseed)", "rating": "4", "source": "Emme Diane", "notes": "high in alpha linolenic acid"}, {"name": "Fragrance", "rating": "3", "source": "", "notes": "1.) fragrance is often used as an umbrella term for 3k+ undisclosed ingredients, at least 40 of which are comedogenic; 2.) safe if derived from an essential oil (not coconut) or tested on clear skin for at least 3-6 months (as products carried by sS are) ; 3). search 'fragrance' on our blog to read our article for more information"}, {"name": "Fucus vesiculosus", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Gelidium Cartilagineum", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Ginger Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Glycerol monostearate", "rating": "1", "source": "", "notes": ""}, {"name": "Glyceryl Oleate", "rating": "5", "source": "Emme Diane", "notes": ""}, {"name": "Glyceryl stearate NSE", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "Glyceryl Stearate SE", "rating": "3", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Glyceryl tricapylo/caprate", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "Glyceryl-3-Diisostearate / Glyceryl-3 Diisostearate", "rating": "4", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Glycine Soja Oil (soybean oil)", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "oils"}, {"name": "Grapeseed Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Grapeseed Oil (Vitis Vinifera Seed Oil)", "rating": "4", "source": "Skin Salvation, Emme Diane", "notes": "high in linoleic acid & vegetable oil"}, {"name": "Green Algae", "rating": "3", "source": "Emme Diane", "notes": "seaweeds"}, {"name": "Green Tea Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Groundnut Oil (Arachis Hypogaea Oil)", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Guava Seed Oil (Psidium Guajava Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in linoleic acid"}, {"name": "Haslea Ostrearia", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Hazelnut Seed Oil (Corylus Avellana Seed Oil)", "rating": "5", "source": "Emme Diane", "notes": "high in oleic acid"}, {"name": "Hemp Seed Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Hexadecyl Alcohol", "rating": "5", "source": "AES, Face Reality, Clearstem, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Hexyl Laurate", "rating": "5", "source": "Clearstem, Emme Diane", "notes": ""}, {"name": "Hexylene glycol", "rating": "2", "source": "", "notes": "mark lees"}, {"name": "Himanthalia Elongate", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Hydrogenated Castor Oil", "rating": "2", "source": "Emme Diane", "notes": "oils"}, {"name": "Hydrogenated Vegetable Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "oils"}, {"name": "Hydrolyzed Lola Implexa", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Hydrolyzed Rhodophycea", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "hydrolyzed wheat protein", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Hypnea Musciformis", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Irish Moss", "rating": "3", "source": "Emme Diane", "notes": "seaweeds"}, {"name": "Isoceteth-20", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Isocetyl Alcohol", "rating": "4", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Isocetyl Stearate", "rating": "5", "source": "AES, Face Reality, Clearstem, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Isodecyl Oleate", "rating": "3", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "isononyl isononoanoate", "rating": "", "source": "Clearstem", "notes": "also flagged in Gritty Beauty list"}, {"name": "Isopropyl Isostearate / isopropyl isosterate", "rating": "5", "source": "AES, Face Reality, Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Isopropyl Lanolate", "rating": "", "source": "AES", "notes": ""}, {"name": "Isopropyl Linolate / isopropyl linoleate", "rating": "4", "source": "AES, Face Reality, Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Isopropyl Myristate", "rating": "5", "source": "ALL", "notes": "fatty acids & their derivatives, is base of Retin-A"}, {"name": "isopropyl neopentanoate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Isopropyl Palmitate", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives, is base of Retin-A"}, {"name": "Isostearate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Isostearic Acid", "rating": "5", "source": "2005-03-04 00:00:00", "notes": "other"}, {"name": "isostearyl", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Isostearyl Isostearate", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Isostearyl neopentanoate", "rating": "3", "source": "AES, Face Reality, Skin Salvation", "notes": ""}, {"name": "jania rubens extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Jasmine Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Jojoba", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Jojoba Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Jojoba Oil (Simmondsia Chinensis Seed Oil)", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "high in eicosenoic acid 1.) not to be used neat on the skin but seems ok in small amounts within a formulation; 2.) is not problematic for all acneic skins (our earth science fragrance free shampoo & youngblood makeup contains this \u2013 only 1 client has reported breaking out from the shampoo but no other incidences have been reported)"}, {"name": "Jojoba Wax", "rating": "2", "source": "Emme Diane", "notes": "waxes"}, {"name": "Kaolin", "rating": "0", "source": "Skin Salvation", "notes": "*diluted in mineral oil or 10% alcohol base"}, {"name": "Kapok Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Kappaphycus", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Kappaphycus Alvarezii Extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Karanja Oil", "rating": "2", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid"}, {"name": "karite", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Kasum Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Kelp", "rating": "3", "source": "ALL", "notes": "seaweeds"}, {"name": "kousou ekisu", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "kukui nut / kukui nut oil / kukui oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Knotted Kelp", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Kokum Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Kukui Nut Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Kukui Nut Oil (Aleurites Moluccana Seed Oil)", "rating": "3", "source": "Emme Diane", "notes": "high in linoleic acid, moderate in oleic and linolenic acid"}, {"name": "Lamimaria ochroleuca extract", "rating": "3", "source": "Skin Salvation", "notes": ""}, {"name": "Laminaria", "rating": "3", "source": "Emme Diane", "notes": "seaweed"}, {"name": "Laminaria digitata", "rating": "3", "source": "Clearstem, Skin Salvation", "notes": ""}, {"name": "Laminaria Digitata Extract", "rating": "3", "source": "ALL", "notes": "seaweeds"}, {"name": "Laminaria Longicruris / extract", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Laminaria Ochroleuca Extract", "rating": "3", "source": "Emme Diane", "notes": "seaweeds"}, {"name": "Laminaria Saccharina / saccharine", "rating": "3", "source": "ALL", "notes": "seaweeds"}, {"name": "Laminaria Saccharina Extract (Laminaria Saccharine)", "rating": "", "source": "ALL", "notes": ""}, {"name": "Laneth-10 / laneth 10", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "lanolins"}, {"name": "Lanolic Acid", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "other"}, {"name": "Lanolin", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "oils"}, {"name": "Lanolin Acid", "rating": "4", "source": "Emme Diane", "notes": "lanolins"}, {"name": "Lanolin Alcohol", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "lanolins"}, {"name": "Lanolin Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "oils"}, {"name": "Lanolin Wax", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "waxes"}, {"name": "Laureth 4", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "laureth 7", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "laureth 12", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Laureth-23 aka Laureth 23", "rating": "3", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Laureth-4 aka Laureth 4", "rating": "5", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Laureth-7", "rating": "5", "source": "Emme Diane", "notes": "waxes"}, {"name": "Lauric Acid", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Laurie Acid in Sunflower Oil", "rating": "4", "source": "Skin Salvation, Emme Diane", "notes": "other lipids"}, {"name": "Lauroyl Lysine", "rating": "4", "source": "Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Lauryl Alcohol", "rating": "2", "source": "Emme Diane", "notes": "other"}, {"name": "Lauryl alcohol *", "rating": "2", "source": "Skin Salvation", "notes": ""}, {"name": "Lauryl Olivate", "rating": "5", "source": "Emme Diane", "notes": "waxes"}, {"name": "Lauryl Sulfate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Lavender Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Lemon Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Lemongrass Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Lime Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Linolate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "linseed", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "linum usitatissimum (linseed) seed oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Linseed Oil", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "oils"}, {"name": "liquor picis carbonis", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Lithothamnium Calcareum / Lithothamnium Calcareum powder", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Lola Implexa", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "lpc", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "lsostearyl Neopentanoate", "rating": "3", "source": "Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Macadamia Nut Oil (Macadamia Ternifolia/Integrifolia Seed Oil)", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "high in oleic acid, moderate in palmitoleic acid"}, {"name": "macroalgae", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Macrocystis Pyrifera (sea kelp)", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Macrocystis Pyrifera Extract", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "magnesium myristate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Magnesium stearate", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "Mahua Seed Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Mandarin Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Mangifera Indica Seed Butter (Mango Butter)", "rating": "2", "source": "Emme Diane", "notes": "high in oleic acid, moderate in stearic acid"}, {"name": "Mango Seed Oil (Mangifera Indica Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in oleic & stearic acid"}, {"name": "Marigold Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Marine Algae", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Marula", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Marula Oil (Sclerocarya Birrea Seed Oil)", "rating": "4", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid"}, {"name": "Mastocarpus Stellatus", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Meadowfoam Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "mica", "rating": "", "source": "", "notes": "noted as possible irritant in Gritty Beauty list"}, {"name": "microcrystalline wax", "rating": "", "source": "", "notes": "Gritty Beauty list"}, {"name": "microcystis aeruginosa", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "mineral oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Mink Oil", "rating": "3", "source": "ALL", "notes": "high in oleic acid"}, {"name": "Monododecyl Ester Sodium Salt Sulfuric Acid", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "monostearate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "moringa / Moringa Oil", "rating": "4", "source": "Emme Diane", "notes": "high in oleic acid"}, {"name": "moringa oleifera seed oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Moss", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Mowrah Butter", "rating": "4", "source": "Emme Diane", "notes": "high in oleic & palmitic acid"}, {"name": "Myreth 3 Myristate / Myreth-3 Myristate", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Myristate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Myristic Acid", "rating": "3", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "myristyl", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Myristyl Alcohol", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives, big irritant"}, {"name": "Myristyl Lactate", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Myristyl Myristate", "rating": "5", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Myristyl Propionate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "myrtrimonium bromide", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Nahor Seed Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "nasturtium officinale (watercress) flower/leaf extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Neem Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Neem Oil", "rating": "5", "source": "Emme Diane", "notes": "high in oleic acid"}, {"name": "Neopentanoate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Neroli Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Nori", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Norwegian Kelp", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "nymphaea alba flower extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "octodidecyl stearoyl stearate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Octyl Palmitate", "rating": "4", "source": "AES, Face Reality, Clearstem, Emme Diane", "notes": ""}, {"name": "Octyl Stearate", "rating": "5", "source": "AES, Face Reality, Emme Diane", "notes": ""}, {"name": "Octyldodecanol*", "rating": "4", "source": "", "notes": "dr. mark lees says this is cloggy, but dr. fulton says is safe and employs this in his own sunscreen lotion formula (superlight spf15)"}, {"name": "Olea Europaea (Olive) Fruit Oil (Olive Oil)", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid | vegetable oils"}, {"name": "Oleic Acid", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "other"}, {"name": "Oleth-10", "rating": "2", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Oleth-20", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Oleth-3", "rating": "5", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Oleth-3 Phosphate", "rating": "2", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Oleth-5", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Oleyl Alcohol", "rating": "4", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Olive", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Olive Oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Olive Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Olive Oil Peg 7 Esters", "rating": "5", "source": "Emme Diane", "notes": "waxes"}, {"name": "Orange Peel Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Oryza Sativa (Rice) Bran Oil", "rating": "5", "source": "Emme Diane", "notes": "Rich Vitamin E"}, {"name": "Ozokerite", "rating": "", "source": "", "notes": "noted as possibly problematic in Gritty Beauty list"}, {"name": "Padina Pavonica", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "padina pavonica extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Palash Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Palm Kernel Oil (Elaeis Guineensis Kernel Oil)", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "Palm Oil (Elaeis Guineensis Oil)", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "high in lauric acid"}, {"name": "Palm Oil Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "palmaria oalmarta extract (dulse)", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "palmaria palmata extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Palm Oil, Red", "rating": "4", "source": "Emme Diane", "notes": "high in oleic acid, moderate in palmitic acid"}, {"name": "Palmaria Palmata", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "palmaria palmate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Palmitate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Palmitic Acid", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "parkii", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "parrafin", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Papaya Seed Oil (Carica Papaya Seed Oil)", "rating": "3", "source": "Emme Diane", "notes": "high in oleic acid"}, {"name": "Passionfruit (Maracuja) Seed Oil", "rating": "2", "source": "Emme Diane", "notes": "high in linoleic acid"}, {"name": "Peach Kernel Oil (Prunus Persica Kernel Oil)", "rating": "4", "source": "Emme Diane", "notes": "high in oleic acid & vegetable oils"}, {"name": "Peanut Oil (Arachis Hypogaea Oil)", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "high in oleic & palmitic acid"}, {"name": "Pecan Oil (Carya Illinoensis Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in oleic acid, moderate in linoleic acid"}, {"name": "PEG 100 Distearate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "PEG 150 Distearate / PEG-150 Distearate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "PEG 16 Lanolin (solulan 16) aka PEG-16 Lanolin", "rating": "4", "source": "ALL", "notes": "lanolins"}, {"name": "PEG 20 stearate", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "PEG 200 Dilaurate aka PEG-200 Dilaurate", "rating": "3", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "PEG 75 Lanolin", "rating": "", "source": "AES", "notes": ""}, {"name": "PEG 8 Castor Oil", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "PEG 8 Stearate, Persea Americana", "rating": "3", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "peg-8 stearate", "rating": "", "source": "", "notes": ""}, {"name": "PEG-150 Pentaerythrityl Stearate", "rating": "5", "source": "Emme Diane", "notes": ""}, {"name": "peg 2 sulfosuccinate", "rating": "", "source": "", "notes": ""}, {"name": "peg 200 dilaurate / peg-200 dilaurate", "rating": "", "source": "", "notes": ""}, {"name": "peg 65", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "pelvetia canaliculata extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Pentaclethara Macroloba (Pracaxi) Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "pentaerythrital", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Pentaerythrital tetra isostearate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": ""}, {"name": "Pentaerythrityl Tetraisostearate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "pequot oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Perilla Oil", "rating": "2", "source": "Emme Diane", "notes": "high in ALA"}, {"name": "persea americana", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "persea gratissima (avocado) oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Petroleum", "rating": "2", "source": "Clearstem, Skin Salvation", "notes": "sS observes this creates black colored plugs on the lipline that don't seem to get inflamed \u2013 most apparent in lipbalms"}, {"name": "PG Caprylate/Caprate", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "PG Dipelargonate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": ""}, {"name": "PG Laurate", "rating": "3", "source": "Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "PG Monostearate / Propylene glycol monostearate", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "phaeodactylum tricornutum extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "phaeophyceae", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Phosphate", "rating": "5", "source": "Emme Diane", "notes": ""}, {"name": "Phytantriol", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "sterols"}, {"name": "Phytessence Wakame", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Pilu Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "pine nut oil", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Pistacia Gum", "rating": "", "source": "Emme Diane", "notes": "irritant"}, {"name": "Pistacia Vera (Pistachio) Seed Oil", "rating": "4", "source": "Emme Diane", "notes": "high in oleic & palmitic acid"}, {"name": "Pisu Oil", "rating": "5", "source": "Emme Diane", "notes": "oils"}, {"name": "pix carbonis", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Plankton", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "plankton extract", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Polyethylene glycol", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "Polyethylene glycol (PEG 400)", "rating": "4", "source": "Skin Salvation", "notes": ""}, {"name": "Polyethylene glycol 300", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "Polyglyceryl 3-Diisostearate aka Polyglyceryl-3 Diisostearate or diisosterate", "rating": "4", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Polyglyceryl 4-Isostearate aka Polyglyceryl-4 Isostearate", "rating": "5", "source": "Clearstem, Emme Diane", "notes": ""}, {"name": "polyglyceryl-4-caprate", "rating": "", "source": "", "notes": ""}, {"name": "Polyglyceryl Diisostearate aka Polyglyceryl-Diisostearate", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "waxes"}, {"name": "Polyglyceryl-2 Isostearate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Polyglyceryl-2 Stearate", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "polyglyceryl-diisostearate", "rating": "", "source": "", "notes": ""}, {"name": "polyquanterium-4", "rating": "", "source": "", "notes": ""}, {"name": "polysiphonia elongata extract", "rating": "", "source": "", "notes": ""}, {"name": "Porphyra", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Porphyridium Cruentum", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "Porphyridium Cruentum extract", "rating": "", "source": "", "notes": ""}, {"name": "Potassium Chloride", "rating": "5", "source": "AES, Face Reality, Clearstem, Emme Diane", "notes": ""}, {"name": "potassium cocoate", "rating": "", "source": "", "notes": ""}, {"name": "potassium salt", "rating": "", "source": "", "notes": ""}, {"name": "PPG 10 Cetyl Ether", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "ppg 12", "rating": "", "source": "", "notes": ""}, {"name": "PPG 12 PEG 65 Lanolin Oil", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "lanolins"}, {"name": "ppg-2 myristyl", "rating": "", "source": "", "notes": ""}, {"name": "PPG 2 Myristyl Propionate", "rating": "3", "source": "AES, Face Reality, Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "ppg 2 myristyl ether propionate", "rating": "", "source": "", "notes": ""}, {"name": "PPG 5 Ceteth 10 Phosphate", "rating": "4", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "PPG-2 Myristyl Propionate", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "ppg ceteth 10 phosphate", "rating": "", "source": "", "notes": ""}, {"name": "pracaxi oil", "rating": "", "source": "", "notes": ""}, {"name": "Prickly Pear Seed Oil ( Opuntia Ficus-Indica Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in linoleic acid"}, {"name": "Propylene Glycol Monostearate", "rating": "4", "source": "Skin Salvation, Emme Diane", "notes": "waxes"}, {"name": "Prunus Armeniaca (Apricot) Kernel Oil", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "oils"}, {"name": "Prunus Domestica (Plum) Seed Oil", "rating": "2", "source": "Emme Diane", "notes": "high in oleic acid, moderate in linoleic acid"}, {"name": "prunus dulcis oil", "rating": "", "source": "", "notes": ""}, {"name": "Pumpkin Seed Oil (Cucurbita Pepo Seed Oil)", "rating": "3", "source": "Emme Diane", "notes": "high in linoleic acid, moderate in oleic acid"}, {"name": "pyrene coal tar pitch", "rating": "", "source": "", "notes": ""}, {"name": "rapeseed oil", "rating": "", "source": "", "notes": ""}, {"name": "Ratanjot Oil / ratanjyat oil", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "oils"}, {"name": "Red Algae", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "red palm oil", "rating": "", "source": "", "notes": ""}, {"name": "retinyl palmitate", "rating": "", "source": "", "notes": ""}, {"name": "rhodophyceae extract", "rating": "", "source": "", "notes": ""}, {"name": "rhodophyceae", "rating": "", "source": "", "notes": ""}, {"name": "Rice Bran Oil (Oryza Sativa Bran Oil)", "rating": "5", "source": "Emme Diane", "notes": "high in oleic & linoleic acid"}, {"name": "ricebran oil", "rating": "", "source": "", "notes": ""}, {"name": "Rockweed", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Rose Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Rosehip Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Rosehip Seed Oil (Rosa Canina Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in linoleic acid, moderate in linolenic acid"}, {"name": "Rosemary Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Safflower Oil (cooking variety)", "rating": "4", "source": "Emme Diane", "notes": "high oleic acid, high in linoleic acid & vegetable oil. COLD PRESSED IS OK, HIGH LINOLEIC CONTENT OIL"}, {"name": "Sal Seed Butter", "rating": "4", "source": "Emme Diane", "notes": "high in stearic and oleic acid"}, {"name": "Sal Seed Oil", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "oils"}, {"name": "Sandalwood Seed Oil (Santalum Album Oil)", "rating": "2", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "oils"}, {"name": "Sargassum", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "seaweeds"}, {"name": "sargassum filipendula extract", "rating": "", "source": "", "notes": ""}, {"name": "sargassum fillpendula extract", "rating": "", "source": "", "notes": ""}, {"name": "sargassum fusiforme extract", "rating": "", "source": "", "notes": ""}, {"name": "sclerocarya birrea", "rating": "", "source": "", "notes": ""}, {"name": "sclerocarya birrea seed oil", "rating": "", "source": "", "notes": ""}, {"name": "sea mayweed", "rating": "", "source": "", "notes": ""}, {"name": "sea fern", "rating": "", "source": "", "notes": ""}, {"name": "SD alcohol 40", "rating": "0", "source": "Skin Salvation", "notes": ""}, {"name": "Sea Grass", "rating": "5", "source": "Emme Diane", "notes": "seaweeds"}, {"name": "Sea whip", "rating": "3", "source": "Clearstem, Skin Salvation", "notes": ""}, {"name": "Sea Whip Extract", "rating": "3", "source": "Clearstem, Emme Diane", "notes": "seaweeds"}, {"name": "Seaweed", "rating": "3", "source": "ALL", "notes": "seaweeds"}, {"name": "Sesame", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Sesame oil", "rating": "2", "source": "Clearstem, Skin Salvation", "notes": "mark lees"}, {"name": "Sesame Seed", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Sesamum Indicum (Sesame) Seed Oil", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "high in linoleic and oleic acid & vegetable oil"}, {"name": "Shark Liver Oil (squalene, not squalane)", "rating": "3", "source": "ALL", "notes": "oils"}, {"name": "shea", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Shea Butter", "rating": "5", "source": "Everyone except SS who sells it", "notes": "high in oleic and stearic acid"}, {"name": "Shea Butter Ethyl Esters", "rating": "", "source": "Emme Diane", "notes": ""}, {"name": "Shea Nut Oil", "rating": "5", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid, moderate in stearic acid"}, {"name": "sheep alcohol", "rating": "", "source": "", "notes": ""}, {"name": "Simethicone", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "Simmondsia Chinensis (Jojoba) Seed Oil", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "1.) not to be used neat on the skin but seems ok in small amounts within a formulation; 2.) is not problematic for all acneic skins (our earth science fragrance free shampoo & youngblood makeup contains this \u2013 only 1 client has reported breaking out from the shampoo but no other incidences have been reported)"}, {"name": "simmondsia chinensis seed wax", "rating": "", "source": "", "notes": ""}, {"name": "sles", "rating": "", "source": "", "notes": ""}, {"name": "sls", "rating": "", "source": "", "notes": ""}, {"name": "sodium alginate", "rating": "", "source": "", "notes": ""}, {"name": "sodium carbomer", "rating": "", "source": "", "notes": ""}, {"name": "Sodium Chloride", "rating": "", "source": "AES", "notes": ""}, {"name": "Sodium Dodecyl Sulfate", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "Sodium Laurel Sulfate", "rating": "", "source": "", "notes": ""}, {"name": "Sodium Laureth Sulfate", "rating": "3", "source": "ALL", "notes": "surfactants & detergents"}, {"name": "Sodium Lauryl Sulfate", "rating": "5", "source": "AES, Face Reality, Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "Sodium Myreth Sulfate", "rating": "3", "source": "Emme Diane", "notes": "surfactants & detergents"}, {"name": "Sodium Salt Sulfuric Acid", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "soil minerals", "rating": "", "source": "", "notes": ""}, {"name": "soja", "rating": "", "source": "", "notes": ""}, {"name": "Solulan 16", "rating": "5", "source": "AES, Face Reality, Clearstem, Emme Diane", "notes": ""}, {"name": "Sorbitan Isostearate", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Sorbitan laurate", "rating": "2", "source": "Emme Diane", "notes": "*results depend on source of material"}, {"name": "Sorbitan Oleate", "rating": "3", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Sorbitan Olivate", "rating": "5", "source": "Emme Diane", "notes": ""}, {"name": "Sorbitan sesquinoleate", "rating": "1", "source": "Skin Salvation", "notes": "*results depend on source of material / also flagged in Gritty Beauty"}, {"name": "sova", "rating": "", "source": "", "notes": ""}, {"name": "soy", "rating": "", "source": "", "notes": ""}, {"name": "soy oil", "rating": "", "source": "", "notes": ""}, {"name": "soybean", "rating": "", "source": "", "notes": ""}, {"name": "soybean oil", "rating": "", "source": "", "notes": ""}, {"name": "sphacelaria", "rating": "", "source": "", "notes": ""}, {"name": "Soybean Oil (Glycine Soja Oil)", "rating": "5", "source": "ALL", "notes": "high in linoleic acid"}, {"name": "spiraea ulmaria (meadowsweet) flower extract", "rating": "", "source": "", "notes": ""}, {"name": "Spirulina", "rating": "3", "source": "ALL", "notes": "seaweeds"}, {"name": "Squalane", "rating": "1", "source": "Skin Salvation", "notes": "1.) not to be confused with squalene (which is in our tested-to-be-safe hydrating cream); 2.) fulton does not have a rating for squalene but rates squalane a 1 (on the scale of 0-5); 3.) squalene is probably fine in small amounts within a formulation but potentially problematic used neat on the skin or in high amounts"}, {"name": "Squalene", "rating": "3", "source": "Clearstem, Emme Diane", "notes": "oils"}, {"name": "starch", "rating": "", "source": "", "notes": ""}, {"name": "stealkonium chloride", "rating": "", "source": "", "notes": ""}, {"name": "Steareth 10, Steareth-10", "rating": "4", "source": "ALL", "notes": "alcohols, sugars & their derivatives"}, {"name": "Steareth-2", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Steareth-20", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Stearic Acid", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "fatty acids & their derivatives"}, {"name": "Stearic Acid: TEA", "rating": "3", "source": "ALL", "notes": "miscellaneous"}, {"name": "Stearyl Alcohol", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Stearyl Heptanoate", "rating": "4", "source": "ALL", "notes": "fatty acids & their derivatives"}, {"name": "Stearyl dimethicone", "rating": "", "source": "", "notes": "added to Gritty Beauty list"}, {"name": "Sucrose Distearate", "rating": "2", "source": "Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Sulfated Castor Oil / sulphated", "rating": "3", "source": "AES, Face Reality, Skin Salvation, Emme Diane", "notes": "miscellaneous"}, {"name": "Sulfated Jojoba Oil / sulphated", "rating": "3", "source": "AES, Face Reality, Skin Salvation, Emme Diane", "notes": "high in eicosenoic acid"}, {"name": "sulfosuccinate", "rating": "", "source": "", "notes": ""}, {"name": "Sulfuric acid, monododecyl ester, sodium salt", "rating": "5", "source": "Skin Salvation, Emme Diane", "notes": "surfactants & detergents"}, {"name": "Sunflower Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Sunflower Oil (GMO)", "rating": "1", "source": "Emme Diane", "notes": "high in linoleic acid, someone rated this a 5 but really??"}, {"name": "Sweet Almond Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Sweet Almond Oil", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "high in oleic acid"}, {"name": "Talc", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "talcum", "rating": "", "source": "", "notes": ""}, {"name": "Tallow", "rating": "2", "source": "Clearstem, Emme Diane", "notes": "high in oleic acid"}, {"name": "Tamanu Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "Tamanu Oil (Calophyllum Inophyllum Seed Oil)", "rating": "5", "source": "Emme Diane", "notes": "high in oleic & linoleic acid"}, {"name": "tea stearate", "rating": "", "source": "", "notes": ""}, {"name": "tetradecyl myristate", "rating": "", "source": "", "notes": ""}, {"name": "theobroma butter", "rating": "", "source": "", "notes": ""}, {"name": "theobroma oil", "rating": "", "source": "", "notes": ""}, {"name": "Theobroma Cacao (Cocoa) Seed Butter", "rating": "4", "source": "Skin Salvation, Emme Diane", "notes": "butters"}, {"name": "Tocopherol (sunflower non-com)", "rating": "3", "source": "Emme Diane", "notes": "vitamins & herbs, this is okay unless it's neat per SS"}, {"name": "Tocopherol acetate*", "rating": "0", "source": "", "notes": "AKA vitamin e. most all skincare products (including several sS formulations) contain this. ***comedogenicity results depend on source of material (commonly derived from cloggy soybean oil) ***ok in small amounts (as a preservative) but problematic when used in larger amounts, high up on an ingredient list or neat on the skin."}, {"name": "Tocopherol*", "rating": "3", "source": "Skin Salvation", "notes": "AKA vitamin e. most all skincare products (including several sS formulations) contain this. ***comedogenicity results depend on source of material (commonly derived from cloggy soybean oil) ***ok in small amounts (as a preservative) but problematic when used in larger amounts, high up on an ingredient list or neat on the skin."}, {"name": "Tomato Seed Oil (Solanum Lycopersicum Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in linoleic acid, moderate in oleic acid"}, {"name": "Tribehenin", "rating": "5", "source": "Emme Diane", "notes": "wax"}, {"name": "Tridecyl Neopentanoate", "rating": "", "source": "Emme Diane", "notes": "fatty acids & their derivatives, 3 irritant"}, {"name": "Triethanolamine", "rating": "2", "source": "Skin Salvation", "notes": ""}, {"name": "Triisostearin", "rating": "", "source": "", "notes": "new add to Gritty Beauty list"}, {"name": "Triethoxysilylethyl Polydimethylsiloxyethyl Dimethicone", "rating": "", "source": "", "notes": "new add to Gritty Beauty list"}, {"name": "triticum aestivum", "rating": "", "source": "", "notes": ""}, {"name": "Triticum Vulgare", "rating": "5", "source": "Emme Diane", "notes": "high in linolenic acid"}, {"name": "tucuma butter", "rating": "", "source": "", "notes": ""}, {"name": "turkey red oil", "rating": "", "source": "", "notes": ""}, {"name": "Ultramarine violet", "rating": "0", "source": "Skin Salvation", "notes": "*diluted in mineral oil or 10% alcohol base"}, {"name": "ulva fasciata", "rating": "", "source": "", "notes": ""}, {"name": "ulva rhacodes", "rating": "", "source": "", "notes": ""}, {"name": "Ulva Lactuca", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Undaria", "rating": "2", "source": "Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Undaria Pinnatifida", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "vegetable gelatin", "rating": "", "source": "", "notes": ""}, {"name": "Vitamin A Palmitate", "rating": "3", "source": "Skin Salvation, Emme Diane", "notes": "vitamins & herbs"}, {"name": "Vitamin E Butter", "rating": "5", "source": "Emme Diane", "notes": "butters"}, {"name": "vitamin e oil", "rating": "", "source": "", "notes": ""}, {"name": "vitellaria paradoxa", "rating": "", "source": "", "notes": ""}, {"name": "Wakame", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "seaweed"}, {"name": "Walnut Seed Oil (Juglans Regia Seed Oil)", "rating": "2", "source": "Emme Diane", "notes": "high in linoleic acid, moderate in oleic acid"}, {"name": "Water-Soluble Sulfur", "rating": "3", "source": "Clearstem, Skin Salvation, Emme Diane", "notes": "preservatives & additives"}, {"name": "Wheat", "rating": "", "source": "Clearstem", "notes": ""}, {"name": "Wheat Germ (Triticum Vulgare Germ Oil)", "rating": "5", "source": "Emme Diane", "notes": ""}, {"name": "Wheat Germ Glyceride", "rating": "3", "source": "Clearstem, Emme Diane", "notes": "alcohols, sugars & their derivatives"}, {"name": "Wheat germ oil", "rating": "5", "source": "ALL", "notes": "high in linolenic acid"}, {"name": "wool alcohol", "rating": "", "source": "", "notes": ""}, {"name": "wool fat", "rating": "", "source": "", "notes": ""}, {"name": "xanthophyta", "rating": "", "source": "", "notes": ""}, {"name": "Xylene", "rating": "4", "source": "ALL", "notes": "miscellaneous"}, {"name": "Zea Mays (Corn Starch)", "rating": "4", "source": "Clearstem, Emme Diane", "notes": ""}, {"name": "Zinc oxide", "rating": "1", "source": "Skin Salvation", "notes": ""}, {"name": "butyrospermum parkii butter", "rating": "", "source": "", "notes": ""}, {"name": "butyrospermum parkii (shea) butter extract", "rating": "", "source": "", "notes": ""}, {"name": "c13-14 isoparaffin", "rating": "", "source": "", "notes": ""}, {"name": "carrot seed oil", "rating": "", "source": "", "notes": ""}, {"name": "ceteareth-6 olivate", "rating": "", "source": "", "notes": ""}, {"name": "chaetomorpha linum (aerea) cladophora radiosa", "rating": "", "source": "", "notes": ""}, {"name": "chondrus crispus", "rating": "", "source": "", "notes": ""}, {"name": "coconut nucifera extract", "rating": "", "source": "", "notes": ""}, {"name": "cocos nucifera seed butter", "rating": "", "source": "", "notes": ""}, {"name": "D&C red no. 19", "rating": "", "source": "", "notes": ""}, {"name": "glycine soja (soybean) oil", "rating": "", "source": "", "notes": ""}, {"name": "laneth 10", "rating": "", "source": "", "notes": ""}, {"name": "papaya seed oil", "rating": "", "source": "", "notes": ""}, {"name": "peach kernel oil", "rating": "", "source": "", "notes": ""}, {"name": "peanut oil", "rating": "", "source": "", "notes": ""}, {"name": "pecan oil", "rating": "", "source": "", "notes": ""}, {"name": "pg monostearate", "rating": "", "source": "", "notes": ""}, {"name": "pumpkin seed oil", "rating": "", "source": "", "notes": ""}, {"name": "ratanjyat oil", "rating": "", "source": "", "notes": ""}, {"name": "rhodophyta", "rating": "", "source": "", "notes": ""}, {"name": "sandalwood seed oil", "rating": "", "source": "", "notes": ""}, {"name": "sapote oil", "rating": "", "source": "", "notes": ""}, {"name": "shark squalene", "rating": "", "source": "", "notes": ""}, {"name": "soy protein", "rating": "", "source": "", "notes": ""}];
+
+// ── STORAGE ───────────────────────────────────────────────
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem('sgHistory') || '[]'); }
+  catch(e) { return []; }
+}
+function saveHistory(h) {
+  localStorage.setItem('sgHistory', JSON.stringify(h));
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+function showView(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'history') renderHistory();
+  if (name === 'list') renderList('');
+}
+
+// ── MATCHING ──────────────────────────────────────────────
+function normalize(s) {
+  return s.toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, (_, i) => [i]);
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i-1] === b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function similarity(a, b) {
+  const na = normalize(a), nb = normalize(b);
+  if (na === nb) return 1.0;
+
+  // Substring containment — aggressive
+  if (na.includes(nb) || nb.includes(na)) {
+    const longer = Math.max(na.length, nb.length);
+    const shorter = Math.min(na.length, nb.length);
+    return 0.75 + 0.2 * (shorter / longer);
+  }
+
+  // Word overlap
+  const wa = new Set(na.split(' ').filter(w => w.length > 2));
+  const wb = new Set(nb.split(' ').filter(w => w.length > 2));
+  const intersection = [...wa].filter(w => wb.has(w)).length;
+  const union = new Set([...wa, ...wb]).size;
+  const jaccard = union > 0 ? intersection / union : 0;
+
+  // Levenshtein
+  const dist = levenshtein(na, nb);
+  const maxLen = Math.max(na.length, nb.length);
+  const lev = maxLen > 0 ? 1 - dist / maxLen : 0;
+
+  return Math.max(jaccard * 0.6 + lev * 0.4, lev * 0.7 + jaccard * 0.3);
+}
+
+function checkIngredient(input) {
+  const EXACT = 0.92;
+  const FUZZY = 0.68; // aggressive — err on side of false positives
+
+  const results = [];
+  for (const avoid of AVOID_LIST) {
+    const sim = similarity(input, avoid.name);
+    if (sim >= FUZZY) {
+      results.push({
+        inputName: input,
+        avoidEntry: avoid,
+        sim: sim,
+        matchType: sim >= EXACT ? 'exact' : 'fuzzy'
+      });
+    }
+  }
+  // Sort by similarity desc; deduplicate keeping best per avoid entry
+  results.sort((a, b) => b.sim - a.sim);
+  const seen = new Set();
+  return results.filter(r => {
+    const key = r.avoidEntry.name;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+// ── RUN CHECK ─────────────────────────────────────────────
+function runCheck() {
+  const raw = document.getElementById('ingredientInput').value.trim();
+  const product = document.getElementById('productName').value.trim() || 'Unnamed Product';
+  if (!raw) { alert('Please paste an ingredient list.'); return; }
+
+  const area = document.getElementById('resultsArea');
+  area.style.display = 'block';
+  area.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div><div>Analyzing…</div></div>';
+
+  setTimeout(() => {
+    const inputs = raw.split(/[,;\n]+/).map(s => s.trim()).filter(s => s.length > 1);
+    let allMatches = [];
+
+    for (const ing of inputs) {
+      const matches = checkIngredient(ing);
+      allMatches.push(...matches);
+    }
+
+    // Deduplicate: per avoid entry, keep highest similarity
+    const bestByAvoid = {};
+    for (const m of allMatches) {
+      const key = m.avoidEntry.name;
+      if (!bestByAvoid[key] || m.sim > bestByAvoid[key].sim) {
+        bestByAvoid[key] = m;
+      }
+    }
+    const finalMatches = Object.values(bestByAvoid).sort((a, b) => {
+      if (a.matchType !== b.matchType) return a.matchType === 'exact' ? -1 : 1;
+      return b.sim - a.sim;
+    });
+
+    const exactCount = finalMatches.filter(m => m.matchType === 'exact').length;
+    const fuzzyCount = finalMatches.filter(m => m.matchType === 'fuzzy').length;
+
+    // Save to history
+    const history = loadHistory();
+    history.unshift({
+      id: Date.now(),
+      product,
+      date: new Date().toISOString(),
+      totalChecked: inputs.length,
+      exactCount,
+      fuzzyCount,
+      matches: finalMatches.map(m => ({
+        inputName: m.inputName,
+        avoidName: m.avoidEntry.name,
+        rating: m.avoidEntry.rating,
+        source: m.avoidEntry.source,
+        notes: m.avoidEntry.notes,
+        sim: m.sim,
+        matchType: m.matchType
+      }))
+    });
+    if (history.length > 50) history.pop();
+    saveHistory(history);
+
+    renderResults(area, product, inputs.length, exactCount, fuzzyCount, finalMatches);
+  }, 200);
+}
+
+function renderResults(area, product, total, exactCount, fuzzyCount, matches) {
+  if (matches.length === 0) {
+    area.innerHTML = `
+      <div class="all-clear">
+        <div class="all-clear-icon">✓</div>
+        <h3>No matches found</h3>
+        <p>None of the ${total} ingredients matched the avoid list.</p>
+      </div>
+      <button class="clear-results-btn" onclick="clearResults()">Clear</button>`;
+    return;
+  }
+
+  let html = `
+    <div class="results-banner">
+      <div class="banner-product">${escHtml(product)}</div>
+      <div class="banner-stat">
+        <div class="banner-stat-num">${total}</div>
+        <div class="banner-stat-label">checked</div>
+      </div>
+      <div class="banner-stat">
+        <div class="banner-stat-num red">${exactCount}</div>
+        <div class="banner-stat-label">exact</div>
+      </div>
+      <div class="banner-stat">
+        <div class="banner-stat-num amber">${fuzzyCount}</div>
+        <div class="banner-stat-label">potential</div>
+      </div>
+    </div>`;
+
+  const exacts = matches.filter(m => m.matchType === 'exact');
+  const fuzzies = matches.filter(m => m.matchType === 'fuzzy');
+
+  if (exacts.length) {
+    html += `<div class="section-heading">Exact matches — avoid</div>`;
+    exacts.forEach(m => { html += matchCard(m); });
+  }
+  if (fuzzies.length) {
+    html += `<div class="section-heading">Potential matches — review carefully</div>`;
+    fuzzies.forEach(m => { html += matchCard(m); });
+  }
+
+  html += `<button class="clear-results-btn" onclick="clearResults()">Clear results</button>`;
+  area.innerHTML = html;
+}
+
+function matchCard(m) {
+  const pct = Math.round(m.sim * 100);
+  const isDiff = normalize(m.inputName) !== normalize(m.avoidEntry.name);
+  const pillClass = m.matchType === 'exact' ? 'pill-exact' : 'pill-fuzzy';
+  const pillText = m.matchType === 'exact' ? 'Exact' : 'Potential';
+
+  let rows = '';
+  if (isDiff) {
+    rows += row('Matched to', `<span class="matched-name">${escHtml(m.avoidEntry.name)}</span>`);
+  }
+  if (m.avoidEntry.rating) {
+    rows += row('Rating', `<span class="rating-badge">${escHtml(m.avoidEntry.rating)} / 5</span>`);
+  }
+  if (m.avoidEntry.source) {
+    rows += row('Source', escHtml(m.avoidEntry.source));
+  }
+  if (m.avoidEntry.notes) {
+    rows += row('Notes', escHtml(m.avoidEntry.notes));
+  }
+  rows += `<div class="match-row">
+    <div class="match-row-label">Similarity</div>
+    <div class="match-row-val">
+      <div class="sim-bar-wrap">
+        <div class="sim-bar"><div class="sim-bar-fill" style="width:${pct}%"></div></div>
+        <div class="sim-pct">${pct}%</div>
+      </div>
+    </div>
+  </div>`;
+
+  return `
+    <div class="match-card ${m.matchType}">
+      <div class="match-card-header">
+        <div class="match-input-name">${escHtml(m.inputName)}</div>
+        <div class="match-type-pill ${pillClass}">${pillText}</div>
+      </div>
+      <div class="match-card-body">${rows}</div>
+    </div>`;
+}
+
+function row(label, val) {
+  return `<div class="match-row">
+    <div class="match-row-label">${label}</div>
+    <div class="match-row-val">${val}</div>
+  </div>`;
+}
+
+function clearResults() {
+  const area = document.getElementById('resultsArea');
+  area.style.display = 'none';
+  area.innerHTML = '';
+  document.getElementById('ingredientInput').value = '';
+  document.getElementById('productName').value = '';
+}
+
+// ── HISTORY ───────────────────────────────────────────────
+function renderHistory() {
+  const h = loadHistory();
+  const el = document.getElementById('historyContent');
+  if (!h.length) {
+    el.innerHTML = '<div class="history-empty">No products checked yet.</div>';
+    return;
+  }
+
+  let html = '';
+  h.forEach((entry, idx) => {
+    const d = new Date(entry.date);
+    const dateStr = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    const total = entry.exactCount + entry.fuzzyCount;
+    html += `
+      <div class="history-card" onclick="toggleHistoryDetail(${idx})">
+        <div class="history-card-top">
+          <div class="history-product-name">${escHtml(entry.product)}</div>
+          <div class="history-date">${dateStr}</div>
+        </div>
+        <div class="history-meta">
+          <div class="history-meta-item"><strong>${entry.totalChecked}</strong> ingredients</div>
+          <div class="history-meta-item ${entry.exactCount > 0 ? 'has-matches' : ''}">
+            <strong>${entry.exactCount}</strong> exact
+          </div>
+          <div class="history-meta-item">
+            <strong>${entry.fuzzyCount}</strong> potential
+          </div>
+        </div>
+        <div id="hdetail-${idx}" class="history-detail">
+          ${total === 0
+            ? '<div style="color:var(--sage);font-size:12px;padding:4px 0">No matches found</div>'
+            : entry.matches.map(m => `
+                <div class="history-match-row">
+                  <div class="history-match-name">${escHtml(m.inputName)}
+                    ${normalize(m.inputName) !== normalize(m.avoidName)
+                      ? `<span style="color:var(--warm-mid);font-size:11px"> → ${escHtml(m.avoidName)}</span>` : ''}
+                    ${m.notes ? `<div style="font-size:11px;color:var(--warm-mid);font-style:italic;margin-top:2px">${escHtml(m.notes)}</div>` : ''}
+                  </div>
+                  <div class="history-match-type ${m.matchType}">${m.matchType}</div>
+                </div>`).join('')
+          }
+        </div>
+      </div>`;
+  });
+
+  html += `<button class="history-clear-btn" onclick="clearHistory()">Clear all history</button>`;
+  el.innerHTML = html;
+}
+
+function toggleHistoryDetail(idx) {
+  const el = document.getElementById('hdetail-' + idx);
+  el.classList.toggle('open');
+}
+
+function clearHistory() {
+  if (!confirm('Clear all product history?')) return;
+  saveHistory([]);
+  renderHistory();
+}
+
+// ── LIST VIEW ─────────────────────────────────────────────
+function renderList(query) {
+  const q = query.toLowerCase().trim();
+  const filtered = q
+    ? AVOID_LIST.filter(i =>
+        i.name.toLowerCase().includes(q) ||
+        (i.notes && i.notes.toLowerCase().includes(q)) ||
+        (i.source && i.source.toLowerCase().includes(q))
+      )
+    : AVOID_LIST;
+
+  document.getElementById('listCount').textContent =
+    `${filtered.length} of ${AVOID_LIST.length} ingredients`;
+
+  const el = document.getElementById('listContent');
+  if (!filtered.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--warm-mid)">No matches</div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map(i => `
+    <div class="list-item">
+      <div class="list-item-name">${escHtml(i.name)}</div>
+      <div class="list-item-meta">
+        ${i.rating ? `<span class="rating-badge">${escHtml(i.rating)}/5</span>` : ''}
+        ${i.source ? `<span>${escHtml(i.source)}</span>` : ''}
+      </div>
+      ${i.notes ? `<div class="list-item-notes">${escHtml(i.notes)}</div>` : ''}
+    </div>`).join('');
+}
+
+function filterList(q) { renderList(q); }
+
+// ── UTILS ─────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function normalize(s) {
+  return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+</script>
+</body>
+</html>
